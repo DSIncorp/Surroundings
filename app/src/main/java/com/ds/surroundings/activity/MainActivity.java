@@ -1,7 +1,9 @@
-package com.ds.surroundings;
+package com.ds.surroundings.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.ds.surroundings.R;
 
 public class MainActivity extends AppCompatActivity {
 
