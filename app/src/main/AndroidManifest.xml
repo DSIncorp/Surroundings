@@ -23,7 +23,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activity.MainActivity">
-            <!--  Add Google Map Library -->
+
+            <!-- Add Google Map Library -->
             <uses-library android:name="com.google.android.maps" />
 
             <meta-data
@@ -40,14 +41,15 @@
             </intent-filter>
         </activity>
         <!-- SinglePlaceActivity -->
-        <!--<activity-->
-            <!--android:name=".activity.SinglePlaceActivity"-->
-            <!--android:label="Place Details"-->
-            <!--android:screenOrientation="landscape"></activity>-->
-        <!--<activity-->
-            <!--android:name=".activity.SettingsActivity"-->
-            <!--android:label="Settings"-->
-            <!--android:screenOrientation="landscape"></activity>-->
+        <!-- <activity -->
+        <!-- android:name=".activity.SinglePlaceActivity" -->
+        <!-- android:label="Place Details" -->
+        <!-- android:screenOrientation="landscape"></activity> -->
+        <!-- <activity -->
+        <!-- android:name=".activity.SettingsActivity" -->
+        <!-- android:label="Settings" -->
+        <!-- android:screenOrientation="landscape"></activity> -->
+        <activity android:name=".activity.SettingsActivity"></activity>
     </application>
 
 </manifest>
