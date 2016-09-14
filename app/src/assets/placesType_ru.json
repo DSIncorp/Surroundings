@@ -1,0 +1,372 @@
+{
+  "Transport": {
+    "types": [
+      {
+        "name": "Airport",
+        "type": "airport",
+        "icon": null
+      },
+      {
+        "name": "Subway station",
+        "type": "subway_station",
+        "icon": null
+      },
+      {
+        "name": "Bus station",
+        "type": "bus_station",
+        "icon": null
+      },
+      {
+        "name": "Car dealer",
+        "type": "car_dealer",
+        "icon": null
+      },
+      {
+        "name": "Car rental",
+        "type": "car_rental",
+        "icon": null
+      },
+      {
+        "name": "Car wash",
+        "type": "car_wash",
+        "icon": null
+      },
+      {
+        "name": "Train_station",
+        "type": "train_station",
+        "icon": null
+      },
+      {
+        "name": "Parking",
+        "type": "parking",
+        "icon": null
+      },
+      {
+        "name": "Gas station",
+        "type": "gas_station",
+        "icon": null
+      }
+    ],
+    "icon": null
+  },
+  "Healthy": {
+    "types": [
+      {
+        "name": "Hospital",
+        "type": "hospital",
+        "icon": null
+      },
+      {
+        "name": "Dentist",
+        "type": "dentist",
+        "icon": null
+      },
+      {
+        "name": "Doctor",
+        "type": "doctor",
+        "icon": null
+      },
+      {
+        "name": "Health",
+        "type": "health",
+        "icon": null
+      },
+      {
+        "name": "Pharmacy",
+        "type": "pharmacy",
+        "icon": null
+      },
+      {
+        "name": "Spa",
+        "type": "spa",
+        "icon": null
+      },
+      {
+        "name": "Gym",
+        "type": "gym",
+        "icon": null
+      },
+      {
+        "name": "Stadium",
+        "type": "stadium",
+        "icon": null
+      }
+    ],
+    "icon": null
+  },
+  "Food": {
+    "types": [
+      {
+        "name": "Bakery",
+        "type": "bakery",
+        "icon": null
+      },
+      {
+        "name": "Cafe",
+        "type": "cafe",
+        "icon": null
+      },
+      {
+        "name": "Food",
+        "type": "food",
+        "icon": null
+      },
+      {
+        "name": "Restaurant",
+        "type": "restaurant",
+        "icon": null
+      }
+    ],
+    "icon": null
+  },
+  "Bar": {
+    "types": [
+      {
+        "name": "Bar",
+        "type": "bar",
+        "icon": null
+      },
+      {
+        "name": "Night_club",
+        "type": "night_club",
+        "icon": null
+      }
+    ],
+    "icon": null
+  },
+  "Finance": {
+    "types": [
+      {
+        "name": "Bank",
+        "type": "bank",
+        "icon": null
+      },
+      {
+        "name": "ATM",
+        "type": "atm",
+        "icon": null
+      }
+    ],
+    "icon": null
+  },
+  "Leisure": {
+    "types": [
+      {
+        "name": "Amusement park",
+        "type": "amusement_park",
+        "icon": null
+      },
+      {
+        "name": "Aquarium",
+        "type": "aquarium",
+        "icon": null
+      },
+      {
+        "name": "Art gallery",
+        "type": "art_gallery",
+        "icon": null
+      },
+      {
+        "name": "Bowling alley",
+        "type": "bowling_alley",
+        "icon": null
+      },
+      {
+        "name": "Casino",
+        "type": "casino",
+        "icon": null
+      },
+      {
+        "name": "Movie theater",
+        "type": "movie_theater",
+        "icon": null
+      },
+      {
+        "name": "Museum",
+        "type": "museum",
+        "icon": null
+      },
+      {
+        "name": "Park",
+        "type": "park",
+        "icon": null
+      }
+    ],
+    "icon": null
+  },
+  "Stores": {
+    "types": [
+      {
+        "name": "Home goods store",
+        "type": "home_goods_store",
+        "icon": null
+      },
+      {
+        "name": "Bicycle store",
+        "type": "bicycle_store",
+        "icon": null
+      },
+      {
+        "name": "Book store",
+        "type": "book_store",
+        "icon": null
+      },
+      {
+        "name": "Clothing store",
+        "type": "clothing_store",
+        "icon": null
+      },
+      {
+        "name": "Department store",
+        "type": "department_store",
+        "icon": null
+      },
+      {
+        "name": "Electronics store",
+        "type": "electronics_store",
+        "icon": null
+      },
+      {
+        "name": "Florist",
+        "type": "florist",
+        "icon": null
+      },
+      {
+        "name": "Furniture store",
+        "type": "furniture_store",
+        "icon": null
+      },
+      {
+        "name": "Grocery or supermarket",
+        "type": "grocery_or_supermarket",
+        "icon": null
+      },
+      {
+        "name": "Hardware store",
+        "type": "hardware_store",
+        "icon": null
+      },
+      {
+        "name": "Jewelry store",
+        "type": "jewelry_store",
+        "icon": null
+      },
+      {
+        "name": "Liquor store",
+        "type": "liquor_store",
+        "icon": null
+      },
+      {
+        "name": "Pet store",
+        "type": "pet_store",
+        "icon": null
+      },
+      {
+        "name": "Shoe store",
+        "type": "shoe_store",
+        "icon": null
+      },
+      {
+        "name": "Shopping mall",
+        "type": "shopping_mall",
+        "icon": null
+      }
+    ],
+    "icon": null
+  },
+  "Administrative": {
+    "types": [
+      {
+        "name": "Courthouse",
+        "type": "courthouse",
+        "icon": null
+      },
+      {
+        "name": "Embassy",
+        "type": "embassy",
+        "icon": null
+      },
+      {
+        "name": "Fire station",
+        "type": "fire_station",
+        "icon": null
+      },
+      {
+        "name": "Local government office",
+        "type": "local_government_office",
+        "icon": null
+      },
+      {
+        "name": "Police",
+        "type": "police",
+        "icon": null
+      },
+      {
+        "name": "Post office",
+        "type": "post_office",
+        "icon": null
+      }
+    ],
+    "icon": null
+  },
+  "Education": {
+    "types": [
+      {
+        "name": "University",
+        "type": "university",
+        "icon": null
+      },
+      {
+        "name": "Library",
+        "type": "library",
+        "icon": null
+      },
+      {
+        "name": "School",
+        "type": "school",
+        "icon": null
+      }
+    ],
+    "icon": null
+  },
+  "Service": {
+    "types": [
+      {
+        "name": "Laundry",
+        "type": "laundry",
+        "icon": null
+      },
+      {
+        "name": "Lawyer",
+        "type": "lawyer",
+        "icon": null
+      },
+      {
+        "name": "Beauty salon",
+        "type": "beauty_salon",
+        "icon": null
+      },
+      {
+        "name": "Hair care",
+        "type": "hair_care",
+        "icon": null
+      }
+    ],
+    "icon": null
+  },
+  "Animals": {
+    "types": [
+      {
+        "name": "Veterinary care",
+        "type": "veterinary_care",
+        "icon": null
+      },
+      {
+        "name": "Zoo",
+        "type": "zoo",
+        "icon": null
+      }
+    ],
+    "icon": null
+  }
+}
