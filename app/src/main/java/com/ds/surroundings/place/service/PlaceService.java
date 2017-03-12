@@ -10,9 +10,9 @@ import java.util.concurrent.ExecutionException;
 
 public interface PlaceService {
 
-    PlaceList searchPlaces(Location location, double radius, String types) throws IOException, ExecutionException, InterruptedException;
+    PlaceList getPlaces(Location location, double radius, String types) throws IOException, ExecutionException, InterruptedException;
 
-    Place getPlaceDetails(Place place) throws ExecutionException, InterruptedException;
+    Place getPlaceDetails(Place place) throws ExecutionException, InterruptedException, IOException;
 
     void refreshPlacesList(PlaceList places);
 }

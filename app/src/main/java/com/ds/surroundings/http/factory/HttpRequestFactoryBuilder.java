@@ -15,7 +15,7 @@ public class HttpRequestFactoryBuilder {
      * Creating http request Factory
      */
     private static void createRequestFactory() {
-        HttpTransport transport = new NetHttpTransport();
+        final HttpTransport transport = new NetHttpTransport();
         factory = transport.createRequestFactory(request -> {
             HttpHeaders headers = new HttpHeaders();
             headers.setUserAgent("AndroidHive-Places-Test");

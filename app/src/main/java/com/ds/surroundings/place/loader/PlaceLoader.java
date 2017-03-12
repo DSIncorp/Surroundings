@@ -33,6 +33,7 @@ public class PlaceLoader {
         //TODO add types to request
 //        if (types != null)
 //            request.getUrl().put("types", types);
+
         Log.d("REQUEST", request.getUrl().toString());
 
         return request.execute().parseAs(PlaceList.class);

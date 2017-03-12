@@ -4,16 +4,14 @@ import android.location.Location;
 import android.os.AsyncTask;
 
 import com.ds.surroundings.place.container.PlaceList;
-import com.ds.surroundings.place.loader.PlaceLoader;
-
-import java.io.IOException;
+import com.ds.surroundings.place.service.PlaceService;
 
 public class LoadPlaceTask extends AsyncTask<Object, Object, PlaceList> {
 
-    private PlaceLoader placeLoader;
+    private PlaceService placeService;
 
-    public LoadPlaceTask() {
-        this.placeLoader = new PlaceLoader();
+    public LoadPlaceTask(PlaceService placeService) {
+        this.placeService = placeService;
     }
 
     @Override
@@ -22,9 +20,12 @@ public class LoadPlaceTask extends AsyncTask<Object, Object, PlaceList> {
         Double radius = (Double) params[1];
         String types = (String) params[2];
 
+        PlaceList places;
         try {
-            return placeLoader.getPlaces(location, radius, types);
-        } catch (IOException e) {
+            places = placeService.getPlaces(location, radius, types);
+            placeService.refreshPlacesList(places);
+            return places;
+        } catch (Exception e) {
             //TODO handle
             e.printStackTrace();
         }

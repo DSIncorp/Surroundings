@@ -1,37 +1,59 @@
 package com.ds.surroundings.application;
 
 import android.app.Application;
+import android.location.LocationListener;
+import android.util.Log;
 
-import com.ds.surroundings.location.service.LocationService;
-import com.ds.surroundings.location.service.impl.LocationServiceImpl;
+import com.ds.surroundings.application.module.AndroidModule;
+import com.ds.surroundings.application.module.ApplicationModule;
+import com.ds.surroundings.location.listener.LocationListenerImpl;
 import com.ds.surroundings.place.container.PlaceList;
 import com.ds.surroundings.place.service.PlaceService;
-import com.ds.surroundings.place.service.impl.PlaceServiceImpl;
+
+import javax.inject.Inject;
 
 public class Surroundings extends Application {
 
+    private static ApplicationComponent applicationComponent;
+
     private PlaceList placeList;
-    private LocationService locationService;
+    private LocationListener locationListener;
     private PlaceService placeService;
+
+    @Inject
+    public void setPlaceList(PlaceList placeList) {
+        this.placeList = placeList;
+    }
+
+    @Inject
+    public void setPlaceService(PlaceService placeService) {
+        this.placeService = placeService;
+    }
+
+    public static ApplicationComponent getApplicationComponent() {
+        return applicationComponent;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        placeList = new PlaceList();
-        placeService = new PlaceServiceImpl(this);
-        locationService = new LocationServiceImpl(getApplicationContext(), placeService);
+        init();
+
+        applicationComponent = DaggerApplicationComponent.builder()
+                .androidModule(new AndroidModule(this))
+                .applicationModule(new ApplicationModule())
+                .build();
+        applicationComponent.inject(this);
+        Log.d("locationListener: ", locationListener.toString());
+        Log.d("placeList: ", placeList.toString());
+    }
+
+    public void init() {
+        locationListener = new LocationListenerImpl(getApplicationContext(), placeList, placeService);
     }
 
     public PlaceList getObserver() {
         return placeList;
-    }
-
-    public LocationService getLocationService() {
-        return locationService;
-    }
-
-    public PlaceService getPlaceService() {
-        return placeService;
     }
 }

@@ -19,4 +19,10 @@ public class Constants {
     // Google Places search url's
     public static final String PLACES_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/search/json?";
     public static final String PLACES_DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json?";
+
+
+    public static double DEFAULT_SEARCH_RADIUS = 1000d;
+
+    public static String DEFAULT_TYPES_TO_SEARCH = "";
+
 }

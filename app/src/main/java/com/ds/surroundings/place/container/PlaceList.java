@@ -37,7 +37,7 @@ public class PlaceList extends Observable implements Serializable {
         this.status = status;
     }
 
-    public void update(){
+    public void update() {
         setChanged();
         notifyObservers();
     }

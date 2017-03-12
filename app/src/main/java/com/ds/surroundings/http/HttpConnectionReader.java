@@ -30,8 +30,6 @@ public class HttpConnectionReader {
             while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
-        } catch (IOException e) {
-            throw e;
         } finally {
             reader.close();
             inputStream.close();

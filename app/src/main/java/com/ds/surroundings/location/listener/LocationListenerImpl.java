@@ -1,4 +1,4 @@
-package com.ds.surroundings.location.service.impl;
+package com.ds.surroundings.location.listener;
 
 import android.app.Service;
 import android.content.Context;
@@ -11,71 +11,70 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.ds.surroundings.location.service.LocationService;
+import com.ds.surroundings.place.async.LoadPlaceThread;
 import com.ds.surroundings.place.container.PlaceList;
 import com.ds.surroundings.place.service.PlaceService;
 import com.ds.surroundings.util.Constants;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import static com.ds.surroundings.settings.Settings.getCurrentLocation;
+import static com.ds.surroundings.settings.Settings.setCurrentLocation;
 
 @SuppressWarnings("ResourceType")
-public class LocationServiceImpl extends Service implements LocationService, LocationListener {
+public class LocationListenerImpl extends Service implements LocationListener {
 
-    private final Context context;
-
-    private Location currentLocation;
     private LocationManager locationManager;
+    private PlaceList observablePlaceList;
     private PlaceService placeService;
 
-    // flag for GPS status
+    //TODO what the fucking flags
     boolean isGPSEnabled = false;
-    // flag for network status
+
     boolean isNetworkEnabled = false;
 
-    public LocationServiceImpl(Context context, PlaceService placeService) {
-        this.context = context;
-        this.placeService = placeService;
+    public LocationListenerImpl(Context context, PlaceList observablePlaceList, PlaceService placeService) {
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        this.observablePlaceList = observablePlaceList;
+        this.placeService = placeService;
         registerListener();
         obtainLastKnownLocation();
-        Log.d("## Current Location :: ", currentLocation == null ? "<NULL>" : currentLocation.toString());
-        getPlaces();
+        Log.d("## Current Location :: ", getCurrentLocation() == null ? "<NULL>" :
+                getCurrentLocation().toString());
     }
 
-    private void getPlaces() {
-        if (currentLocation != null) {
-            PlaceList places = null;
-            try {
-                places = placeService.searchPlaces(currentLocation, 10, "");
-                Log.d("## LocationService:Places :: ", places.getStatus() + " " + places.getPlaces());
-            } catch (IOException | InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-            if (places != null) {
-                Log.d("## LocationService", "refreshing!");
-                placeService.refreshPlacesList(places);
-            }
-        }
-    }
-
-    @Override
-    public Location getCurrentLocation() {
-        return currentLocation;
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
 
     @Override
     public void onLocationChanged(Location location) {
         Log.d("##LOCATION::", location.toString());
         if (isBetterLocation(location)) {
-            currentLocation = location;
-            getPlaces();
+            setCurrentLocation(location);
+            setPlacesToContext();
+        }
+    }
+
+    private void setPlacesToContext() {
+        if (getCurrentLocation() != null) {
+            PlaceList placeList = getPlaceList();
+            if (placeList != null) {
+                observablePlaceList.setPlaces(placeList.getPlaces());
+                Log.d("## LocationService", ":Places :: " + placeList.getStatus() + " " + placeList.getPlaces());
+                Log.d("## LocationService", "refreshing!");
+            }
+        }
+    }
+
+    private PlaceList getPlaceList() {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        LoadPlaceThread loadPlaceThread = new LoadPlaceThread(placeService);
+        Future<PlaceList> placeListFuture = executorService.submit(loadPlaceThread);
+        try {
+            return placeListFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            return null;
         }
     }
 
@@ -102,10 +101,10 @@ public class LocationServiceImpl extends Service implements LocationService, Loc
     }
 
     private void obtainLastKnownLocation() {
-        currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        Location lastKnownGpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (isBetterLocation(lastKnownGpsLocation)) {
-            currentLocation = lastKnownGpsLocation;
+        setCurrentLocation(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+        Location lastKnownLocationGps = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (isBetterLocation(lastKnownLocationGps)) {
+            setCurrentLocation(lastKnownLocationGps);
         }
     }
 
@@ -113,12 +112,12 @@ public class LocationServiceImpl extends Service implements LocationService, Loc
         if (location == null) {
             return false;
         }
-        if (currentLocation == null) {
-            currentLocation = location;
+        if (getCurrentLocation() == null) {
+            setCurrentLocation(location);
             return true;
         }
 
-        long timeDelta = location.getTime() - currentLocation.getTime();
+        long timeDelta = location.getTime() - getCurrentLocation().getTime();
         boolean isSignificantlyNewer = timeDelta > Constants.MIN_TIME_BETWEEN_UPDATES;
         boolean isSignificantlyOlder = timeDelta < (-Constants.MIN_TIME_BETWEEN_UPDATES);
         boolean isNewer = timeDelta > 0;
@@ -129,13 +128,13 @@ public class LocationServiceImpl extends Service implements LocationService, Loc
             return false;
         }
 
-        int accuracyDelta = (int) (location.getAccuracy() - currentLocation.getAccuracy());
+        int accuracyDelta = (int) (location.getAccuracy() - getCurrentLocation().getAccuracy());
         boolean isLessAccurate = accuracyDelta > 0;
         boolean isMoreAccurate = accuracyDelta < 0;
         boolean isSignificantlyLessAccurate = accuracyDelta > 200;
 
         boolean isFromSameProvider = isSameProvider(location.getProvider(),
-                currentLocation.getProvider());
+                getCurrentLocation().getProvider());
 
         if (isMoreAccurate) {
             return true;
@@ -155,5 +154,11 @@ public class LocationServiceImpl extends Service implements LocationService, Loc
             return provider2 == null;
         }
         return provider1.equals(provider2);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 }
