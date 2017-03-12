@@ -5,12 +5,11 @@ import android.location.LocationManager;
 public class Constants {
 
 //    public static final int MIN_TIME_BETWEEN_UPDATES = 1000 * 60 * 2; // 2 minutes
-    public static final int MIN_TIME_BETWEEN_UPDATES = 0;
+    public static final int MIN_TIME_BETWEEN_UPDATES = 0; //as much as possible
 
     public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 10 meters
 
     public static final String LOCATION_PROVIDER = LocationManager.GPS_PROVIDER;
-    //    Or, use NETWORK location data:
     //    public static final String LOCATION_PROVIDER = LocationManager.NETWORK_PROVIDER;
 
     // Google API Key
@@ -23,6 +22,6 @@ public class Constants {
 
     public static double DEFAULT_SEARCH_RADIUS = 1000d;
 
-    public static String DEFAULT_TYPES_TO_SEARCH = "";
+    public static String DEFAULT_TYPES_TO_SEARCH = "bank";
 
 }

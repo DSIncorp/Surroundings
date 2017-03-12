@@ -30,9 +30,9 @@ public class PlaceLoader {
         request.getUrl().put("radius", radius); // in meters
         request.getUrl().put("sensor", "false");
 
-        //TODO add types to request
-//        if (types != null)
-//            request.getUrl().put("types", types);
+        if (types != null) {
+            request.getUrl().put("types", types);
+        }
 
         Log.d("REQUEST", request.getUrl().toString());
 
