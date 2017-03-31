@@ -3,9 +3,10 @@ package com.ds.surroundings.activity;
 import android.app.Activity;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.FrameLayout;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.ds.surroundings.R;
 import com.ds.surroundings.application.ApplicationComponent;
@@ -13,10 +14,15 @@ import com.ds.surroundings.application.Surroundings;
 import com.ds.surroundings.camera.CameraPreview;
 import com.ds.surroundings.camera.service.CameraService;
 import com.ds.surroundings.orientation.Orientation;
+import com.ds.surroundings.place.Place;
+import com.ds.surroundings.place.PlaceButton;
 import com.ds.surroundings.place.async.LoadPlaceTask;
 import com.ds.surroundings.place.container.PlaceList;
 import com.ds.surroundings.place.service.PlaceService;
+import com.ds.surroundings.util.PlaceUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.ExecutionException;
@@ -26,16 +32,21 @@ import javax.inject.Inject;
 import static com.ds.surroundings.settings.Settings.getCurrentLocation;
 import static com.ds.surroundings.settings.Settings.getSearchRadius;
 import static com.ds.surroundings.settings.Settings.getTypesToSearch;
+import static java.lang.Math.round;
 
 public class MainActivity extends Activity implements Observer, Orientation.Listener {
 
     private CameraService cameraService;
     private PlaceService placeService;
     private Orientation orientation;
+    private List<PlaceButton> placeButtons;
 
     public ApplicationComponent getAppComponent() {
         return Surroundings.getApplicationComponent();
     }
+
+    double cameraAngle;
+    DisplayMetrics metrics;
 
     @Inject
     public void setCameraService(CameraService cameraService) {
@@ -53,7 +64,7 @@ public class MainActivity extends Activity implements Observer, Orientation.List
         getAppComponent().inject(this);
         setContentView(R.layout.activity_main);
         Surroundings application = (Surroundings) getApplication();
-
+        placeButtons = new ArrayList<>();
         PlaceList observer = application.getObserver();
         observer.addObserver(this);
         observer.update();
@@ -62,6 +73,11 @@ public class MainActivity extends Activity implements Observer, Orientation.List
 
         Log.d("Camera service isnull: ", String.valueOf((cameraService == null)));
 
+        metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        Camera.Parameters p = cameraService.getCamera(this).getParameters();
+        cameraAngle = p.getVerticalViewAngle();
     }
 
     @Override
@@ -100,26 +116,61 @@ public class MainActivity extends Activity implements Observer, Orientation.List
 
     }
 
-    int count = 0;
-    TextView degreesLabel;
-    TextView degreesLabel2;
-    TextView degreesLabel3;
-    TextView degreesLabel4;
-
     @Override
-    public void onOrientationChanged(float pitch, float roll, float yaw) {
+    public void onOrientationChanged(float yaw) {
 
-        Log.d("rotation", String.valueOf(this.getWindowManager().getDefaultDisplay().getRotation()));
-        degreesLabel.setText(pitch + "°");
-        degreesLabel2.setText(roll + "°");
-        degreesLabel3.setText(yaw + "°");
-        count++;
+
+//        Log.d("metrics.heightPixels", String.valueOf(metrics.heightPixels));
+//        Log.d("metrics.widthPixels", String.valueOf(metrics.widthPixels));
+
+
+        for (PlaceButton button : placeButtons) {
+            Place place = button.getPlace();
+            float deltaAngle = yaw - PlaceUtil.getPlaceAzimut(place.getGeometry().getLocation(), getCurrentLocation());
+            if (deltaAngle > 180) deltaAngle -= 360;
+            Log.d(place.getName(), " " + deltaAngle);
+            button.setX(round(metrics.widthPixels * deltaAngle / cameraAngle));
+        }
+
     }
 
     @Override
     public void update(Observable observable, Object data) {
         //TODO update view
-        Log.d("## Main Activity:", "ObserverUpdate");
+        PlaceList placeList = (PlaceList) observable;
+        List<Place> places = placeList.getPlaces();
+
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        if (placeButtons.size() > 0) {
+            preview.removeViews(1, placeButtons.size());
+        }
+        placeButtons.clear();
+
+        for (Place place : places) {
+            createButton(place);
+        }
+        for (PlaceButton button : placeButtons) {
+            preview.addView(button);
+        }
+
+    }
+
+    private void createButton(Place place) {
+        PlaceButton button = new PlaceButton(this, place);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        button.setY(metrics.heightPixels / 2 + button.getHeight() / 2);
+        button.setLayoutParams(new LinearLayout.LayoutParams(metrics.heightPixels / 5, metrics.heightPixels / 10));
+
+        button.setText(place.getName());
+        button.setTextColor(-1);
+        button.setBackgroundColor(0xff444444);
+        button.setBackgroundResource(R.drawable.button_shape);
+        button.setPadding(10, 0, 0, 0);
+        button.getBackground().setAlpha(100);
+        placeButtons.add(button);
     }
 
     private void setCameraView() {
@@ -131,15 +182,5 @@ public class MainActivity extends Activity implements Observer, Orientation.List
         CameraPreview cameraPreview = new CameraPreview(this, camera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(cameraPreview);
-
-        degreesLabel = new TextView(this);
-        degreesLabel2 = new TextView(this);
-        degreesLabel2.setY(50);
-        degreesLabel3 = new TextView(this);
-        degreesLabel3.setY(100);
-        degreesLabel4 = (TextView) findViewById(R.id.degreesLabel);
-        preview.addView(degreesLabel);
-        preview.addView(degreesLabel2);
-        preview.addView(degreesLabel3);
     }
 }

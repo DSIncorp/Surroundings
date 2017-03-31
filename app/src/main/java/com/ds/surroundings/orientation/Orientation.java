@@ -7,18 +7,13 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.WindowManager;
 
 public class Orientation implements SensorEventListener {
 
     public interface Listener {
 
-        void onOrientationChanged(float pitch, float roll, float yaw);
+        void onOrientationChanged(float yaw);
     }
-
-    private static final int SENSOR_DELAY_MICROS = 50 * 1000; // 50ms
-
-    private final WindowManager mWindowManager;
 
     private final SensorManager mSensorManager;
     @Nullable
@@ -29,7 +24,6 @@ public class Orientation implements SensorEventListener {
     private Listener mListener;
 
     public Orientation(Activity activity) {
-        mWindowManager = activity.getWindow().getWindowManager();
         mSensorManager = (SensorManager) activity.getSystemService(Activity.SENSOR_SERVICE);
         mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
     }
@@ -71,7 +65,6 @@ public class Orientation implements SensorEventListener {
         }
     }
 
-    long mLastT = 0;
 
     private void updateOrientation(SensorEvent event) {
         float[] rotationMatrix = new float[16];
@@ -87,14 +80,10 @@ public class Orientation implements SensorEventListener {
         float[] orientation = new float[3];
         SensorManager.getOrientation(adjustedRotationMatrix, orientation);
 
-        //TODO consider to use Math.toDegrees()
         float yaw = (float) Math.round(Math.toDegrees(orientation[0]));
         float pitch = (float) Math.round(Math.toDegrees(orientation[1]));
         float roll = (float) Math.round(Math.toDegrees(orientation[2]));
 
-//        if (event.timestamp - mLastT > 500000000) {
-//            mLastT = event.timestamp;
-            mListener.onOrientationChanged(pitch, roll, yaw);
-//        }
+        mListener.onOrientationChanged(yaw + 180);
     }
 }
