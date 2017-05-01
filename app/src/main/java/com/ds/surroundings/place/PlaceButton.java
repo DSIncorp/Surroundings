@@ -1,10 +1,10 @@
 package com.ds.surroundings.place;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatButton;
 import android.util.AttributeSet;
-import android.widget.Button;
 
-public class PlaceButton extends Button {
+public class PlaceButton extends AppCompatButton {
 
     private Place place;
 

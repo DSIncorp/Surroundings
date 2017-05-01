@@ -81,8 +81,6 @@ public class Orientation implements SensorEventListener {
         SensorManager.getOrientation(adjustedRotationMatrix, orientation);
 
         float yaw = (float) Math.round(Math.toDegrees(orientation[0]));
-        float pitch = (float) Math.round(Math.toDegrees(orientation[1]));
-        float roll = (float) Math.round(Math.toDegrees(orientation[2]));
 
         mListener.onOrientationChanged(yaw + 180);
     }
