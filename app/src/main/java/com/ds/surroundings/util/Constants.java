@@ -22,6 +22,6 @@ public class Constants {
 
     public static double DEFAULT_SEARCH_RADIUS = 1000d;
 
-    public static String DEFAULT_TYPES_TO_SEARCH = "bank";
+    public static String DEFAULT_TYPES_TO_SEARCH = "store";
 
 }

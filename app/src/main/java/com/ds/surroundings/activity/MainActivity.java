@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.ds.surroundings.R;
 import com.ds.surroundings.application.ApplicationComponent;
@@ -20,7 +21,6 @@ import com.ds.surroundings.place.PlaceButton;
 import com.ds.surroundings.place.async.LoadPlaceTask;
 import com.ds.surroundings.place.container.PlaceList;
 import com.ds.surroundings.place.service.PlaceService;
-import com.ds.surroundings.util.LayoutUtil;
 import com.ds.surroundings.util.PlaceUtil;
 
 import java.util.ArrayList;
@@ -49,6 +49,7 @@ public class MainActivity extends Activity implements Observer, Orientation.List
 
     double cameraAngle;
     DisplayMetrics metrics;
+    CameraPreview cameraPreview;
 
     @Inject
     public void setCameraService(CameraService cameraService) {
@@ -60,6 +61,8 @@ public class MainActivity extends Activity implements Observer, Orientation.List
         this.placeService = placeService;
     }
 
+    TextView yawView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +72,6 @@ public class MainActivity extends Activity implements Observer, Orientation.List
         placeButtons = new ArrayList<>();
         PlaceList observer = application.getObserver();
         observer.addObserver(this);
-        observer.update();
 
         orientation = new Orientation(this);
 
@@ -82,13 +84,10 @@ public class MainActivity extends Activity implements Observer, Orientation.List
         cameraAngle = parameters.getVerticalViewAngle();
 
         RelativeLayout preview = (RelativeLayout) findViewById(R.id.camera_preview);
-        LayoutUtil.setUpLayout(this, preview, metrics);
+        setUpView();
 
-        ImageButton settingsButton = (ImageButton) findViewById(R.id.settingsButton);
-        settingsButton.setOnClickListener(view -> {
-            Intent i = new Intent(this, SettingsActivity.class);
-            startActivity(i);
-        });
+        yawView = new TextView(this);
+        preview.addView(yawView);
     }
 
     @Override
@@ -100,7 +99,10 @@ public class MainActivity extends Activity implements Observer, Orientation.List
     @Override
     protected void onStop() {
         super.onStop();
+        cameraService.releaseCamera();
         orientation.stopListening();
+        RelativeLayout preview = (RelativeLayout) findViewById(R.id.camera_preview);
+        preview.removeView(cameraPreview);
     }
 
     @Override
@@ -109,18 +111,18 @@ public class MainActivity extends Activity implements Observer, Orientation.List
         cameraService.releaseCamera();
         orientation.stopListening();
         RelativeLayout preview = (RelativeLayout) findViewById(R.id.camera_preview);
-        preview.removeAllViews();
+        preview.removeView(cameraPreview);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("Camera service isnull: ", String.valueOf((cameraService == null)));
-
         setCameraView();
         orientation.startListening(this);
         try {
-            new LoadPlaceTask(placeService).execute(getCurrentLocation(), getSearchRadius(), getTypesToSearch()).get();
+            new LoadPlaceTask(placeService).execute(getCurrentLocation(), getSearchRadius(),
+                    getTypesToSearch()).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -128,6 +130,7 @@ public class MainActivity extends Activity implements Observer, Orientation.List
 
     @Override
     public void onOrientationChanged(float yaw) {
+        yawView.setText(String.valueOf(yaw));
         for (PlaceButton button : placeButtons) {
             Place place = button.getPlace();
             float deltaAngle = PlaceUtil.getPlaceAzimut(place.getGeometry().getLocation(),
@@ -141,16 +144,13 @@ public class MainActivity extends Activity implements Observer, Orientation.List
 
     @Override
     public void update(Observable observable, Object data) {
-        //TODO update view
         PlaceList placeList = (PlaceList) observable;
         List<Place> places = placeList.getPlaces();
 
         RelativeLayout preview = (RelativeLayout) findViewById(R.id.camera_preview);
-        if (placeButtons.size() > 0) {
-            preview.removeViews(1, placeButtons.size());
-            placeButtons.clear();
+        for (PlaceButton button : placeButtons) {
+            preview.removeView(button);
         }
-
         for (Place place : places) {
             createButton(place);
         }
@@ -174,17 +174,29 @@ public class MainActivity extends Activity implements Observer, Orientation.List
         button.setBackgroundResource(R.drawable.button_shape);
         button.setPadding(10, 0, 0, 0);
         button.getBackground().setAlpha(100);
+        button.setOnClickListener(v -> startSinglePlaceActivity(place));
         placeButtons.add(button);
+    }
+
+    private void startSinglePlaceActivity(Place place) {
+        Intent singlePlaceIntent = new Intent(this, SinglePlaceActivity.class);
+        singlePlaceIntent.putExtra("place", place);
+        startActivity(singlePlaceIntent);
+    }
+
+    private void setUpView() {
+        ImageButton settingsButton = (ImageButton) findViewById(R.id.settingsButton);
+        settingsButton.setOnClickListener(view -> {
+            Intent i = new Intent(this, SettingsActivity.class);
+            startActivity(i);
+        });
     }
 
     private void setCameraView() {
         Camera camera = cameraService.getCamera(this);
-        createCameraPreview(camera);
-    }
-
-    private void createCameraPreview(Camera camera) {
-        CameraPreview cameraPreview = new CameraPreview(this, camera);
+        cameraPreview = new CameraPreview(this, camera);
         RelativeLayout preview = (RelativeLayout) findViewById(R.id.camera_preview);
         preview.addView(cameraPreview, 0);
     }
+
 }

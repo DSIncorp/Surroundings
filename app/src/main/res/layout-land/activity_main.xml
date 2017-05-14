@@ -9,11 +9,24 @@
     tools:context=".activity.MainActivity">
 
     <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:alpha="0" />
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:alpha="0" />
+    <ImageButton
         android:id="@+id/settingsButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:srcCompat="@android:drawable/ic_menu_preferences"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentTop="true"
+        app:srcCompat="@android:drawable/ic_menu_preferences" />
 </RelativeLayout>

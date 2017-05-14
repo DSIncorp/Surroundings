@@ -20,12 +20,12 @@ public final class LayoutUtil {
         first.setBackgroundResource(R.drawable.button_shape);
         second.setBackgroundResource(R.drawable.button_shape);
 
-        second.setX(metrics.widthPixels-100);
-        second.setY(metrics.heightPixels-100);
+        second.setX(metrics.widthPixels);
+        second.setY(metrics.heightPixels);
 
         first.getBackground().setAlpha(0);
         second.getBackground().setAlpha(0);
-        layout.addView(first, 100, 100);
-        layout.addView(second, 100, 100);
+        layout.addView(first, 1);
+        layout.addView(second, 2);
     }
 }

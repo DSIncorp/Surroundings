@@ -25,7 +25,7 @@ public class Orientation implements SensorEventListener {
 
     public Orientation(Activity activity) {
         mSensorManager = (SensorManager) activity.getSystemService(Activity.SENSOR_SERVICE);
-        mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
+        mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
     }
 
     public void startListening(Listener listener) {
@@ -70,7 +70,7 @@ public class Orientation implements SensorEventListener {
         float[] rotationMatrix = new float[16];
         SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values);
 
-        final int worldAxisForDeviceAxisX = SensorManager.AXIS_Z;
+        final int worldAxisForDeviceAxisX = SensorManager.AXIS_MINUS_Z;
         final int worldAxisForDeviceAxisY = SensorManager.AXIS_MINUS_X;
 
         float[] adjustedRotationMatrix = new float[16];

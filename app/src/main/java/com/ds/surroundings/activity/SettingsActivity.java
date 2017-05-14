@@ -15,8 +15,6 @@ public class SettingsActivity extends PreferenceActivity {
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
         
-        getActionBar().setDisplayShowHomeEnabled(true);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

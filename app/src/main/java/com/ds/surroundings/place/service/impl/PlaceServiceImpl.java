@@ -21,6 +21,11 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    public PlaceList getPlaces() {
+        return observablePlaceList;
+    }
+
+    @Override
     public PlaceList getPlaces(Location location, double radius, String types) throws IOException {
         return placeLoader.getPlaces(location, radius, types);
     }
