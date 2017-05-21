@@ -18,7 +18,6 @@ import com.ds.surroundings.camera.service.CameraService;
 import com.ds.surroundings.orientation.Orientation;
 import com.ds.surroundings.place.Place;
 import com.ds.surroundings.place.PlaceButton;
-import com.ds.surroundings.place.async.LoadPlaceTask;
 import com.ds.surroundings.place.container.PlaceList;
 import com.ds.surroundings.place.service.PlaceService;
 import com.ds.surroundings.util.PlaceUtil;
@@ -27,13 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
 import static com.ds.surroundings.settings.Settings.getCurrentLocation;
-import static com.ds.surroundings.settings.Settings.getSearchRadius;
-import static com.ds.surroundings.settings.Settings.getTypesToSearch;
 import static java.lang.Math.round;
 
 public class MainActivity extends Activity implements Observer, Orientation.Listener {
@@ -120,12 +116,12 @@ public class MainActivity extends Activity implements Observer, Orientation.List
         Log.d("Camera service isnull: ", String.valueOf((cameraService == null)));
         setCameraView();
         orientation.startListening(this);
-        try {
-            new LoadPlaceTask(placeService).execute(getCurrentLocation(), getSearchRadius(),
-                    getTypesToSearch()).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            new LoadPlaceTask(placeService, this).execute(getCurrentLocation(),
+//                    getSearchRadius(), getTypesToSearch()).get();
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -136,7 +132,6 @@ public class MainActivity extends Activity implements Observer, Orientation.List
             float deltaAngle = PlaceUtil.getPlaceAzimut(place.getGeometry().getLocation(),
                     getCurrentLocation()) - yaw;
             if (deltaAngle > 180) deltaAngle -= 360;
-            Log.d(place.getName(), " " + deltaAngle);
             button.setX(round(metrics.widthPixels * deltaAngle / cameraAngle));
         }
 

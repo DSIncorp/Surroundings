@@ -2,7 +2,6 @@ package com.ds.surroundings.application;
 
 import android.app.Application;
 import android.location.LocationListener;
-import android.util.Log;
 
 import com.ds.surroundings.application.module.AndroidModule;
 import com.ds.surroundings.application.module.ApplicationModule;
@@ -38,15 +37,13 @@ public class Surroundings extends Application {
     public void onCreate() {
         super.onCreate();
 
-        init();
 
         applicationComponent = DaggerApplicationComponent.builder()
                 .androidModule(new AndroidModule(this))
                 .applicationModule(new ApplicationModule())
                 .build();
         applicationComponent.inject(this);
-        Log.d("locationListener: ", locationListener.toString());
-        Log.d("placeList: ", placeList.toString());
+        init();
     }
 
     public void init() {

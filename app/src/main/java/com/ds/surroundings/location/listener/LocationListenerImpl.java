@@ -50,7 +50,9 @@ public class LocationListenerImpl extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         Log.d("##LOCATION::", location.toString());
-        if (isBetterLocation(location)) {
+        if (observablePlaceList == null || observablePlaceList.getPlaces() == null ||
+                observablePlaceList.getPlaces().size() == 0 || isBetterLocation(location)) {
+            Log.d("##LOCATION IS BETTER:", "!");
             setCurrentLocation(location);
             setPlacesToContext();
         }
@@ -74,6 +76,7 @@ public class LocationListenerImpl extends Service implements LocationListener {
         try {
             return placeListFuture.get();
         } catch (InterruptedException | ExecutionException e) {
+            Log.d("##LocationService Error", e.getMessage());
             return null;
         }
     }
@@ -94,10 +97,10 @@ public class LocationListenerImpl extends Service implements LocationListener {
     }
 
     private void registerListener() {
-        locationManager.requestLocationUpdates(Constants.LOCATION_PROVIDER,
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 Constants.MIN_TIME_BETWEEN_UPDATES, Constants.MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-//                Constants.MIN_TIME_BETWEEN_UPDATES, Constants.MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                Constants.MIN_TIME_BETWEEN_UPDATES, Constants.MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
     }
 
     private void obtainLastKnownLocation() {

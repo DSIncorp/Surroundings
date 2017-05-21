@@ -16,5 +16,7 @@ public interface PlaceService {
 
     Place getPlaceDetails(Place place) throws ExecutionException, InterruptedException, IOException;
 
+    void refreshPlacesList();
+
     void refreshPlacesList(PlaceList places);
 }

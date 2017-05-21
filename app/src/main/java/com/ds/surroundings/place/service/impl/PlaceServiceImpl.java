@@ -38,6 +38,11 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
+    public void refreshPlacesList() {
+        observablePlaceList.notifyObservers();
+    }
+
+    @Override
     public void refreshPlacesList(PlaceList places) {
         observablePlaceList.setPlaces(places.getPlaces());
     }
