@@ -9,9 +9,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.ds.surroundings.R;
+import com.ds.surroundings.application.ApplicationComponent;
+import com.ds.surroundings.application.Surroundings;
 import com.ds.surroundings.place.Place;
+import com.ds.surroundings.place.async.LoadPlaceDetailsTask;
+import com.ds.surroundings.place.service.PlaceService;
 import com.ds.surroundings.settings.Settings;
 import com.ds.surroundings.util.OnMapAndViewReadyListener;
 import com.ds.surroundings.util.PermissionUtils;
@@ -24,6 +30,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
 
 public class SinglePlaceActivity extends FragmentActivity implements
         OnMapAndViewReadyListener.OnGlobalLayoutAndMapReadyListener,
@@ -40,15 +50,50 @@ public class SinglePlaceActivity extends FragmentActivity implements
 
     private GoogleMap mMap;
     private GoogleApiClient googleApiClient;
+    private Place currentPlace;
+    private PlaceService placeService;
+
+    @Inject
+    public void setPlaceService(PlaceService placeService) {
+        this.placeService = placeService;
+    }
+
+    public ApplicationComponent getAppComponent() {
+        return Surroundings.getApplicationComponent();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getAppComponent().inject(this);
+
         setContentView(R.layout.single_place);
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         new OnMapAndViewReadyListener(mapFragment, this);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        currentPlace = getPlace();
+        TextView placeName = (TextView) findViewById(R.id.name);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.loadProgressBar);
+
+        placeName.setText(currentPlace.getName());
+        Place place = null;
+        try {
+            place = new LoadPlaceDetailsTask(placeService, progressBar).execute(currentPlace).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        if (place != null) {
+            TextView placeAddress = (TextView) findViewById(R.id.address);
+            placeAddress.setText(place.getVicinity());
+        }
     }
 
     private Place getPlace() {
@@ -65,7 +110,6 @@ public class SinglePlaceActivity extends FragmentActivity implements
     }
 
     private void addPlaceMarker() {
-        Place currentPlace = getPlace();
         LatLng placeLatLng = getPlaceLatLng(currentPlace);
         LatLng userLatLng = getUserLatLng();
         Marker placeMarker = mMap.addMarker(new MarkerOptions()

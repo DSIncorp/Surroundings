@@ -1,6 +1,7 @@
 package com.ds.surroundings.application;
 
 import com.ds.surroundings.activity.MainActivity;
+import com.ds.surroundings.activity.SinglePlaceActivity;
 import com.ds.surroundings.application.module.AndroidModule;
 import com.ds.surroundings.application.module.ApplicationModule;
 
@@ -16,5 +17,6 @@ public interface ApplicationComponent {
 
     void inject(Surroundings surroundings);
 
+    void inject(SinglePlaceActivity singlePlaceActivity);
 
 }

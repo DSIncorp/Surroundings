@@ -146,6 +146,7 @@ public class MainActivity extends Activity implements Observer, Orientation.List
         for (PlaceButton button : placeButtons) {
             preview.removeView(button);
         }
+        placeButtons.clear();
         for (Place place : places) {
             createButton(place);
         }
