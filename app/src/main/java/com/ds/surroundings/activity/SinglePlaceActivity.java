@@ -81,9 +81,13 @@ public class SinglePlaceActivity extends FragmentActivity implements
 
         currentPlace = getPlace();
         TextView placeName = (TextView) findViewById(R.id.name);
+        TextView placeAddress = (TextView) findViewById(R.id.address);
+        TextView placePhone = (TextView) findViewById(R.id.phone);
+        TextView placeStatus = (TextView) findViewById(R.id.isopen);
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.loadProgressBar);
 
         placeName.setText(currentPlace.getName());
+        placeAddress.setText(currentPlace.getVicinity());
         Place place = null;
         try {
             place = new LoadPlaceDetailsTask(placeService, progressBar).execute(currentPlace).get();
@@ -91,8 +95,13 @@ public class SinglePlaceActivity extends FragmentActivity implements
             e.printStackTrace();
         }
         if (place != null) {
-            TextView placeAddress = (TextView) findViewById(R.id.address);
-            placeAddress.setText(place.getVicinity());
+            placePhone.setText(place.getDetails().getPhoneNumber());
+            Boolean isOpen = place.getDetails().getIsOpen();
+            if (isOpen != null) {
+                placeStatus.setText(isOpen ? "Is open now" : "It could be closed");
+            } else {
+                placeStatus.setText("No information about work time.");
+            }
         }
     }
 

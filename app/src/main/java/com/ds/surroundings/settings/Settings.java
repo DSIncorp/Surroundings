@@ -14,7 +14,7 @@ public final class Settings {
     private static Location currentLocation;
 
     private Settings() {
-        throw new IllegalStateException("calss is not designed for instantiation");
+        throw new IllegalStateException("class is not designed for instantiation");
     }
 
     public static double getSearchRadius() {
