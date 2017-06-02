@@ -6,6 +6,7 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,6 +31,8 @@ import java.util.Observer;
 import javax.inject.Inject;
 
 import static com.ds.surroundings.settings.Settings.getCurrentLocation;
+import static com.ds.surroundings.util.PlaceUtil.getButtonText;
+import static com.ds.surroundings.util.PlaceUtil.getComparativeRange;
 import static java.lang.Math.round;
 
 public class MainActivity extends Activity implements Observer, Orientation.Listener {
@@ -116,12 +119,6 @@ public class MainActivity extends Activity implements Observer, Orientation.List
         Log.d("Camera service isnull: ", String.valueOf((cameraService == null)));
         setCameraView();
         orientation.startListening(this);
-//        try {
-//            new LoadPlaceTask(placeService, this).execute(getCurrentLocation(),
-//                    getSearchRadius(), getTypesToSearch()).get();
-//        } catch (InterruptedException | ExecutionException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
@@ -146,6 +143,7 @@ public class MainActivity extends Activity implements Observer, Orientation.List
         for (PlaceButton button : placeButtons) {
             preview.removeView(button);
         }
+        placeButtons.clear();
         for (Place place : places) {
             createButton(place);
         }
@@ -157,19 +155,21 @@ public class MainActivity extends Activity implements Observer, Orientation.List
 
     private void createButton(Place place) {
         PlaceButton button = new PlaceButton(this, place);
-
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        button.setY(metrics.heightPixels / 2 + button.getHeight() / 2);
-
-        button.setText(place.getName());
+        button.setText(getButtonText(place.getName()));
         button.setTextColor(-1);
         button.setBackgroundColor(0xff444444);
         button.setBackgroundResource(R.drawable.button_shape);
-        button.setPadding(10, 0, 0, 0);
-        button.getBackground().setAlpha(100);
+        button.setGravity(Gravity.CENTER_VERTICAL);
+        button.setPadding(0, 0, 0, 0);
+        button.getBackground().setAlpha(175);
+        button.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.cafe, 0, 0, 0);
         button.setOnClickListener(v -> startSinglePlaceActivity(place));
+
+        double comparativeRange = getComparativeRange(place.getGeometry().getLocation(),
+                getCurrentLocation());
+        float buttonYPosition = (float) ((metrics.heightPixels - 150) * (1 - comparativeRange));
+        button.setY(buttonYPosition);
         placeButtons.add(button);
     }
 

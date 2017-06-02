@@ -1,15 +1,17 @@
 package com.ds.surroundings.util;
 
 import android.location.Location;
+import android.support.annotation.NonNull;
 
 import com.ds.surroundings.place.Geometry;
+import com.ds.surroundings.settings.Settings;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.atan;
 import static java.lang.Math.round;
 import static java.lang.Math.toDegrees;
 
-public class PlaceUtil {
+public final class PlaceUtil {
 
     private PlaceUtil() {
         throw new IllegalStateException("Class is not designed for instantiation.");
@@ -35,8 +37,7 @@ public class PlaceUtil {
         }
         if (isThirdQuarter(placeLocation, userLocation)) {
             return azimut + 180;
-        }
-        else if (isFourthQuarter(placeLocation, userLocation)) {
+        } else if (isFourthQuarter(placeLocation, userLocation)) {
             return azimut + 90;
         }
         return azimut;
@@ -61,4 +62,29 @@ public class PlaceUtil {
         return placeLocation.getLongitude() >= userLocation.getLongitude() &&
                 placeLocation.getLatitude() <= userLocation.getLatitude();
     }
+
+    public static double getComparativeRange(Geometry.Location placeLocation, Location userLocation) {
+
+        final int R = 6371;
+
+        double latDistance = Math.toRadians(userLocation.getLatitude() - placeLocation.getLatitude());
+        double lonDistance = Math.toRadians(userLocation.getLongitude() - placeLocation.getLongitude());
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(placeLocation.getLatitude())) * Math.cos(Math.toRadians(userLocation.getLatitude()))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000;
+
+        return distance / Settings.getSearchRadius();
+    }
+
+    public static String getButtonText(String placeName){
+        return placeName.length() > 18 ? getAbbreviation(placeName) : placeName;
+    }
+
+    @NonNull
+    private static String getAbbreviation(String placeName) {
+        return placeName.substring(0, 14) + "...";
+    }
+
 }
